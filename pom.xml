@@ -4,7 +4,22 @@
   <artifactId>doko-tsubu-kai</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>.gitignore</name>
+  
+  <dependencies>
+    <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>jakarta.servlet.jsp</groupId>
+        <artifactId>jakarta.servlet.jsp-api</artifactId>
+        <version>3.1.1</version>
+        <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -16,7 +31,10 @@
       </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.3</version>
+        <version>3.3.2</version>
+        <configuration>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
     </plugins>
   </build>
