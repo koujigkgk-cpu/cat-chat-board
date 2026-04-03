@@ -17,25 +17,30 @@ import model.User;
 public class Login extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+ protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // リクエストパラメータの取得
     request.setCharacterEncoding("UTF-8");
-    String name = request.getParameter("name");
+    String id = request.getParameter("name"); // 画面の入力項目が「名前」ならそのままでOK
     String pass = request.getParameter("pass");
-    // Userインスタンス（ユーザー情報）の生成
-    User user = new User(name, name, pass);
+    
+    // Userインスタンスの生成
+    // 第1引数にID、第2引数に名前を入れる設計なら、入力値を適切に割り当てます
+    User user = new User(id, id, pass); 
+    
     // ログイン処理
     LoginLogic loginLogic = new LoginLogic();
+    
+    // loginLogic.execute 内で AccountsDAO を呼び出し、
+    // DBに一致するユーザーがいれば true が返ってくるはずです
     boolean isLogin = loginLogic.execute(user);
 
     // ログイン成功時の処理
     if (isLogin) {
-      // ユーザー情報をセッションスコープに保存
       HttpSession session = request.getSession();
       session.setAttribute("loginUser", user);
     }
+    
     // ログイン結果画面にフォワード
     RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/loginResult.jsp");
     dispatcher.forward(request, response);
   }
-}
