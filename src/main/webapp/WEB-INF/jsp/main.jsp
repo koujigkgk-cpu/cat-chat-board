@@ -210,23 +210,24 @@
                         </div>
                     </div>
                     <c:forEach var="reply" items="${mutterList}">
-                        <c:if test="${reply.replyId == mutter.id}">
-                            <div class="reply-card">
-                                <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="reply-icon">
-                                <div style="flex: 1;">
-                                    <div style="display:flex; align-items: center;">
-                                        <span class="user-name-link" style="font-size:0.85rem;"><c:out value="${reply.userName}" /></span>
-                                        <span class="date"><c:out value="${reply.createdAt}" /></span>
-                                        <a href="Delete?id=${reply.id}" onclick="return confirm('削除しますか？')" class="delete-link">×</a>
-                                    </div>
-                                    <div class="content" style="font-size: 0.9rem;"><c:out value="${reply.text}" /></div>
-                                    <c:if test="${not empty reply.image}">
-                                        <img src="images/${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
-                                    </c:if>
-                                </div>
-                            </div>
-                        </c:if>
-                    </c:forEach>
+    <%-- ★追加：返信のIDが親のIDと一致し、かつ、自分自身（reply.id != mutter.id）でない場合のみ表示 --%>
+    <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
+        <div class="reply-card">
+            <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="reply-icon">
+            <div style="flex: 1;">
+                <div style="display:flex; align-items: center;">
+                    <span class="user-name-link" style="font-size:0.85rem;"><c:out value="${reply.userName}" /></span>
+                    <span class="date"><c:out value="${reply.createdAt}" /></span>
+                    <a href="Delete?id=${reply.id}" onclick="return confirm('削除しますか？')" class="delete-link">×</a>
+                </div>
+                <div class="content" style="font-size: 0.9rem;"><c:out value="${reply.text}" /></div>
+                <c:if test="${not empty reply.image}">
+                    <img src="images/${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
+                </c:if>
+            </div>
+        </div>
+    </c:if>
+</c:forEach>
                 </div>
             </c:if>
         </c:forEach>
