@@ -1,15 +1,10 @@
-# 1. 土台（OS）を決める
-FROM maven:3.8.4-openjdk-17 AS build
-# 2. Eclipseで作ったプログラムを全部コピーする
+# 1. ビルド環境（Maven 3.8.5 + Java 17）
+FROM maven:3.8.5-openjdk-17 AS build
 COPY . .
-# 3. Javaの実行ファイル（warファイル）を組み立てる
 RUN mvn clean package -DskipTests
 
-# 4. 実行用の軽い部屋に移動する
-FROM openjdk:17-jdk-slim
-# 5. 組み立てたファイルだけを持ってくる
+# 2. 実行環境（Eclipse Temurin 17 を使用 - こちらが現在の標準です）
+FROM eclipse-temurin:17-jdk
 COPY --from=build /target/*.war app.war
-# 6. 8080番の窓口を開ける
 EXPOSE 8080
-# 7. アプリを起動する！
 ENTRYPOINT ["java", "-jar", "/app.war"]
