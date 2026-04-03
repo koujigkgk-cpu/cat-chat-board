@@ -23,7 +23,7 @@ import model.User;
 @WebServlet("/Main")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 1, // 1MB
-    maxFileSize = 1024 * 1024 * 10,    // 1ファイル最大10MB
+    maxFileSize = 1024 * 1024 * 10,     // 1ファイル最大10MB
     maxRequestSize = 1024 * 1024 * 50   // リクエスト全体最大50MB
 )
 public class Main extends HttpServlet {
@@ -54,6 +54,16 @@ public class Main extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         
+        // ★追加: セッションとログインユーザーのチェック (ヌルポ対策)
+        HttpSession session = request.getSession();
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        if (loginUser == null) {
+            // ログインしていない場合はログイン画面へ戻す
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
         String text = null;
         String filename = null;
         int replyId = 0;
@@ -71,17 +81,16 @@ public class Main extends HttpServlet {
             }
 
             // 2. テキストと画像の取得
-         // 2. テキストと画像の取得
             text = request.getParameter("text");
             Part part = request.getPart("image");
-            filename = part.getSubmittedFileName();
+            filename = (part != null) ? part.getSubmittedFileName() : null;
 
             // 3. 投稿処理
             if (text != null && !text.trim().isEmpty()) {
                 // 画像がある場合のみ保存処理
                 if (filename != null && !filename.isEmpty()) {
-                    // ★保存先を /Users/kouji/upload/ に指定
-                    String path = "/Users/kouji/upload/"; 
+                    // ★修正: PC用パスではなく、サーバーが書き込み可能な場所を自動選択
+                    String path = request.getServletContext().getRealPath("/images/");
                     
                     java.io.File uploadDir = new java.io.File(path);
                     if (!uploadDir.exists()) {
@@ -89,14 +98,11 @@ public class Main extends HttpServlet {
                     }
                     
                     // ファイルを物理保存
-                    part.write(path + filename);
+                    part.write(path + java.io.File.separator + filename);
                 }
-                // ...以下、DAOへの保存処理へ続く
-                
-                HttpSession session = request.getSession();
-                User loginUser = (User) session.getAttribute("loginUser");
                 
                 // Mutterインスタンスを生成して保存
+                // ここで loginUser.getName() を呼んでも、上で null チェック済みなので安全です
                 Mutter mutter = new Mutter(loginUser.getName(), text, filename, replyId);
                 PostMutterLogic postMutterLogic = new PostMutterLogic();
                 postMutterLogic.execute(mutter);
@@ -107,26 +113,20 @@ public class Main extends HttpServlet {
             }
 
         } catch (IllegalStateException | ServletException e) {
-            // ファイルサイズ超過などのエラーをキャッチ
-            request.setAttribute("errorMsg", "ファイルサイズが大きすぎるか、アップロードに失敗しました。");
+            request.setAttribute("errorMsg", "アップロードに失敗しました。");
         }
 
         // 4. 結果に応じた画面遷移
         if (isSuccess) {
-            // 成功時はリダイレクト（二重投稿防止）
             response.sendRedirect("Main");
         } else {
-            // 失敗時は現在の状態を維持してフォワード
+            // 失敗時はリストを再取得してフォワード
             GetMutterListLogic getMutterListLogic = new GetMutterListLogic();
             List<Mutter> mutterList = getMutterListLogic.execute();
             request.setAttribute("mutterList", mutterList);
             
-            HttpSession session = request.getSession();
-            User loginUser = (User) session.getAttribute("loginUser");
-            if (loginUser != null) {
-                ProfileDAO profileDao = new ProfileDAO();
-                request.setAttribute("profile", profileDao.findByUserId(loginUser.getId()));
-            }
+            ProfileDAO profileDao = new ProfileDAO();
+            request.setAttribute("profile", profileDao.findByUserId(loginUser.getId()));
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/main.jsp");
             dispatcher.forward(request, response);
