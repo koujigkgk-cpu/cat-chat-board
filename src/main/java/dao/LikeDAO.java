@@ -1,19 +1,23 @@
 package dao;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class LikeDAO {
-    private final String JDBC_URL = "jdbc:mysql://localhost:3306/dokotsubu?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Tokyo";
-    private final String DB_USER = "root";
-    private final String DB_PASS = "carp8912"; // ご自身の環境に合わせて変更してください
+    // Supabaseの接続情報に変更
+    private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres";
+    private final String DB_USER = "postgres";
+    private final String DB_PASS = "あなたのパスワード"; // ★Supabaseで設定したパスワードに変更してください
 
     public int toggleLike(int mutterId, String userName) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // PostgreSQLのドライバをロード
+            Class.forName("org.postgresql.Driver");
+            
             try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-                // すでに肉球があるかチェック
+                // すでにいいねがあるかチェック (PostgreSQLに合わせてテーブル名は小文字推奨)
                 String checkSql = "SELECT id FROM likes WHERE mutter_id = ? AND user_name = ?";
                 PreparedStatement ps = conn.prepareStatement(checkSql);
                 ps.setInt(1, mutterId);
@@ -43,7 +47,9 @@ public class LikeDAO {
                 ResultSet rsCount = cps.executeQuery();
                 if (rsCount.next()) return rsCount.getInt(1);
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
         return 0;
     }
 }
