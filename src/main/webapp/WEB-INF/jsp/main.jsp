@@ -23,7 +23,6 @@
 
     .app-container { display: flex; justify-content: center; gap: 24px; max-width: 1250px; margin: 0 auto; padding: 0 20px; }
     
-    /* ★修正: 画面が狭くても横幅を確保し、消さないように設定 */
     .side-column { width: 240px; flex-shrink: 0; position: sticky; top: 20px; height: fit-content; margin-top: 80px; display: block !important; }
     .center-column { flex: 1; max-width: 600px; min-height: 100vh; background: rgba(13, 17, 23, 0.5); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
 
@@ -60,7 +59,6 @@
     #cat-trivia { font-size: 0.85rem; line-height: 1.6; min-height: 50px; }
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
-    /* レスポンシブ: スマホ（600px以下）の時だけサイドバーを消す */
     @media (max-width: 300px) {
         .side-column { display: none !important; }
     }
@@ -108,16 +106,35 @@
         document.getElementById('clearBtn').style.display = "none";
     }
 
+    // ★修正版: 肉球ボタン（いいね）処理
     function pressNiku(btn, mutterId) {
         const params = new URLSearchParams();
         params.append('mutterId', mutterId);
-        fetch('LikeServlet', { method: 'POST', body: params })
-        .then(res => res.text())
+
+        fetch('LikeServlet', { 
+            method: 'POST', 
+            body: params,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.text();
+        })
         .then(count => {
-            btn.querySelector('.niku-count').innerText = count;
+            // カウントを更新
+            const countSpan = btn.querySelector('.niku-count');
+            if (countSpan) countSpan.innerText = count;
+            
+            // アニメーション演出
             btn.style.color = "#ff7eb9";
-            btn.style.transform = "scale(1.2)";
+            btn.style.transition = "0.2s";
+            btn.style.transform = "scale(1.3)";
             setTimeout(() => { btn.style.transform = "scale(1)"; }, 200);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
     }
 </script>
@@ -197,7 +214,6 @@
                             </div>
                         </div>
                     </div>
-                    <%-- 返信ループ：自分自身を表示しないようにガード --%>
                     <c:forEach var="reply" items="${mutterList}">
                         <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
                             <div class="reply-card">
