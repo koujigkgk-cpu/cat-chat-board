@@ -38,8 +38,11 @@
     input[type="text"] { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: white; margin-bottom: 10px; box-sizing: border-box; outline: none; }
     input[type="submit"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
 
-    .thread-group { border-bottom: 1px solid var(--border); }
-    .mutter-card { padding: 15px 20px; display: flex; }
+    /* ★修正: 投稿ごとの区切りを強調 */
+    .thread-group { border-bottom: 5px solid rgba(0, 0, 0, 0.5); padding-bottom: 10px; background: rgba(255,255,255,0.01); }
+    .mutter-card { padding: 20px; display: flex; border-left: 3px solid transparent; transition: 0.3s; }
+    .mutter-card:hover { border-left-color: var(--accent); background: rgba(255,255,255,0.02); }
+    
     .mutter-icon { width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
     .reply-card { margin: 0 20px 10px 60px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; display: flex; border: 1px solid var(--border); }
     .reply-icon { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
@@ -56,8 +59,9 @@
     #cat-trivia { font-size: 0.85rem; line-height: 1.6; min-height: 50px; }
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
-    @media (max-width: 768px) {
-        
+    /* ★修正: 1050pxでの非表示を削除 */
+    @media (max-width: 800px) {
+        .side-column { display: none; }
         .center-column { border: none; }
     }
 </style>
@@ -87,16 +91,12 @@
         document.getElementById('cat-trivia').innerText = trivias[randomIndex];
     }
 
- // ★追加: リアルタイム検索 & クリア機能
     document.addEventListener('input', (e) => {
         if (e.target.id === 'searchInput') {
             const word = e.target.value.toLowerCase();
             const threads = document.querySelectorAll('.thread-group');
             const clearBtn = document.getElementById('clearBtn');
-            
-            // 入力があれば解除ボタンを表示、なければ非表示
             clearBtn.style.display = word.length > 0 ? "block" : "none";
-
             threads.forEach(thread => {
                 const text = thread.innerText.toLowerCase();
                 thread.style.display = text.includes(word) ? "" : "none";
@@ -104,18 +104,14 @@
         }
     });
 
-    // ★追加: 検索をリセットする関数
     function clearSearch() {
         const input = document.getElementById('searchInput');
-        input.value = ""; // 入力を空にする
-        
+        input.value = "";
         const threads = document.querySelectorAll('.thread-group');
-        threads.forEach(thread => thread.style.display = ""); // 全て表示に戻す
-        
-        document.getElementById('clearBtn').style.display = "none"; // ボタンを隠す
+        threads.forEach(thread => thread.style.display = "");
+        document.getElementById('clearBtn').style.display = "none";
     }
 
-    // ★追加: 肉球ボタンの非同期通信
     function pressNiku(btn, mutterId) {
         const params = new URLSearchParams();
         params.append('mutterId', mutterId);
@@ -138,28 +134,37 @@
     <aside class="side-column">
         <div class="glass-card profile-card">
             <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="profile-avatar">
-            <div style="font-weight: bold; font-size: 1.1rem;"><c:out value="${loginUser.name}" /></div>
-            <div style="color: var(--text-sub); font-size: 0.8rem;">@${loginUser.name}</div>
-            <div class="stats">
-                <div><small>投稿</small><br><strong>${mutterList.size()}</strong></div>
-            </div>
-            <a href="ProfileServlet" class="btn-side">Profile</a>
-            <a href="Logout" style="color: var(--text-sub); font-size: 0.75rem; text-decoration: none; display: block; margin-top: 15px;">Logout</a>
+            
+            <%-- ★修正: loginUserがnullの場合の対策 --%>
+            <c:choose>
+                <c:when test="${not empty loginUser}">
+                    <div style="font-weight: bold; font-size: 1.1rem;"><c:out value="${loginUser.name}" /></div>
+                    <div style="color: var(--text-sub); font-size: 0.8rem;">@${loginUser.name}</div>
+                    <div class="stats">
+                        <div><small>投稿</small><br><strong>${mutterList.size()}</strong></div>
+                    </div>
+                    <a href="ProfileServlet" class="btn-side">Profile</a>
+                    <a href="Logout" style="color: var(--text-sub); font-size: 0.75rem; text-decoration: none; display: block; margin-top: 15px;">Logout</a>
+                </c:when>
+                <c:otherwise>
+                    <div style="font-weight: bold; font-size: 1.1rem;">ゲスト</div>
+                    <a href="index.jsp" class="btn-side">Login</a>
+                </c:otherwise>
+            </c:choose>
         </div>
     </aside>
 
     <main class="center-column">
         <h1>キャット板</h1>
 
-       <div style="padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
-    <input type="text" id="searchInput" placeholder="🐾 キーワードで検索..." 
-           style="flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--glass); color: white; outline: none; font-size: 0.9rem;">
-    
-    <button type="button" id="clearBtn" onclick="clearSearch()" 
-            style="display: none; background: var(--glass); border: 1px solid var(--border); color: var(--text-sub); border-radius: 20px; padding: 8px 15px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">
-        ✕ 解除
-    </button>
-</div>
+        <div style="padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
+            <input type="text" id="searchInput" placeholder="🐾 キーワードで検索..." 
+                   style="flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--glass); color: white; outline: none; font-size: 0.9rem;">
+            <button type="button" id="clearBtn" onclick="clearSearch()" 
+                    style="display: none; background: var(--glass); border: 1px solid var(--border); color: var(--text-sub); border-radius: 20px; padding: 8px 15px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">
+                ✕ 解除
+            </button>
+        </div>
 
         <c:if test="${not empty errorMsg}">
             <div class="error-banner"><c:out value="${errorMsg}" /></div>
@@ -204,7 +209,6 @@
                             </div>
                         </div>
                     </div>
-                    <%-- 返信ループ --%>
                     <c:forEach var="reply" items="${mutterList}">
                         <c:if test="${reply.replyId == mutter.id}">
                             <div class="reply-card">
