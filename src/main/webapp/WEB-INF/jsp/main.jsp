@@ -22,8 +22,10 @@
     }
 
     .app-container { display: flex; justify-content: center; gap: 24px; max-width: 1250px; margin: 0 auto; padding: 0 20px; }
-    .side-column { width: 260px; flex-shrink: 0; position: sticky; top: 20px; height: fit-content; margin-top: 80px; }
-    .center-column { flex: 1; max-width: 650px; min-height: 100vh; background: rgba(13, 17, 23, 0.5); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+    
+    /* ★修正: 画面が狭くても横幅を確保し、消さないように設定 */
+    .side-column { width: 240px; flex-shrink: 0; position: sticky; top: 20px; height: fit-content; margin-top: 80px; display: block !important; }
+    .center-column { flex: 1; max-width: 600px; min-height: 100vh; background: rgba(13, 17, 23, 0.5); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
 
     h1 { padding: 20px; color: var(--accent); text-align: center; position: sticky; top: 0; background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(10px); z-index: 10; border-bottom: 1px solid var(--border); margin: 0; letter-spacing: 2px; }
 
@@ -38,13 +40,12 @@
     input[type="text"] { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: white; margin-bottom: 10px; box-sizing: border-box; outline: none; }
     input[type="submit"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
 
-    /* ★修正: 投稿ごとの区切りを強調 */
     .thread-group { border-bottom: 5px solid rgba(0, 0, 0, 0.5); padding-bottom: 10px; background: rgba(255,255,255,0.01); }
-    .mutter-card { padding: 20px; display: flex; border-left: 3px solid transparent; transition: 0.3s; }
+    .mutter-card { padding: 20px; display: flex; border-left: 3px solid transparent; }
     .mutter-card:hover { border-left-color: var(--accent); background: rgba(255,255,255,0.02); }
     
     .mutter-icon { width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
-    .reply-card { margin: 0 20px 10px 60px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; display: flex; border: 1px solid var(--border); }
+    .reply-card { margin: 0 20px 10px 60px; padding: 12px; background: rgba(88, 166, 255, 0.05); border-radius: 12px; display: flex; border: 1px solid var(--border); border-left: 2px solid var(--accent); }
     .reply-icon { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
 
     .user-name-link { color: white; font-weight: bold; text-decoration: none; }
@@ -59,8 +60,10 @@
     #cat-trivia { font-size: 0.85rem; line-height: 1.6; min-height: 50px; }
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
-    /* ★修正: 1050pxでの非表示を削除 */
-   
+    /* レスポンシブ: スマホ（600px以下）の時だけサイドバーを消す */
+    @media (max-width: 600px) {
+        .side-column { display: none !important; }
+    }
 </style>
 
 <script>
@@ -76,11 +79,11 @@
     }
     
     const trivias = [
-        "猫の鼻紋は、人間でいう「指紋」と同じで、一匹ずつ違います。",
+        "猫の鼻紋は一匹ずつ違います。",
         "猫は一生の約3分の2を寝て過ごします。",
         "猫は時速約48キロメートルで走ることができます。",
-        "猫の耳は180度回転させることができ、32個の筋肉で制御されています。",
-        "猫がゴロゴロ鳴らすのは、怪我を治すためという説もあります。",
+        "猫の耳は180度回転させることができます。",
+        "猫がゴロゴロ鳴らすのは怪我を治すためという説もあります。",
         "猫は甘みを感じることができません。"
     ];
     function updateTrivia() {
@@ -92,20 +95,16 @@
         if (e.target.id === 'searchInput') {
             const word = e.target.value.toLowerCase();
             const threads = document.querySelectorAll('.thread-group');
-            const clearBtn = document.getElementById('clearBtn');
-            clearBtn.style.display = word.length > 0 ? "block" : "none";
+            document.getElementById('clearBtn').style.display = word.length > 0 ? "block" : "none";
             threads.forEach(thread => {
-                const text = thread.innerText.toLowerCase();
-                thread.style.display = text.includes(word) ? "" : "none";
+                thread.style.display = thread.innerText.toLowerCase().includes(word) ? "" : "none";
             });
         }
     });
 
     function clearSearch() {
-        const input = document.getElementById('searchInput');
-        input.value = "";
-        const threads = document.querySelectorAll('.thread-group');
-        threads.forEach(thread => thread.style.display = "");
+        document.getElementById('searchInput').value = "";
+        document.querySelectorAll('.thread-group').forEach(t => t.style.display = "");
         document.getElementById('clearBtn').style.display = "none";
     }
 
@@ -115,11 +114,10 @@
         fetch('LikeServlet', { method: 'POST', body: params })
         .then(res => res.text())
         .then(count => {
-            const countSpan = btn.querySelector('.niku-count');
-            countSpan.innerText = count;
+            btn.querySelector('.niku-count').innerText = count;
             btn.style.color = "#ff7eb9";
-            btn.style.transform = "scale(1.3) rotate(-10deg)";
-            setTimeout(() => { btn.style.transform = "scale(1) rotate(0deg)"; }, 200);
+            btn.style.transform = "scale(1.2)";
+            setTimeout(() => { btn.style.transform = "scale(1)"; }, 200);
         });
     }
 </script>
@@ -131,8 +129,6 @@
     <aside class="side-column">
         <div class="glass-card profile-card">
             <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="profile-avatar">
-            
-            <%-- ★修正: loginUserがnullの場合の対策 --%>
             <c:choose>
                 <c:when test="${not empty loginUser}">
                     <div style="font-weight: bold; font-size: 1.1rem;"><c:out value="${loginUser.name}" /></div>
@@ -157,10 +153,7 @@
         <div style="padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
             <input type="text" id="searchInput" placeholder="🐾 キーワードで検索..." 
                    style="flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--glass); color: white; outline: none; font-size: 0.9rem;">
-            <button type="button" id="clearBtn" onclick="clearSearch()" 
-                    style="display: none; background: var(--glass); border: 1px solid var(--border); color: var(--text-sub); border-radius: 20px; padding: 8px 15px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">
-                ✕ 解除
-            </button>
+            <button type="button" id="clearBtn" onclick="clearSearch()" style="display: none; background: var(--glass); border: 1px solid var(--border); color: var(--text-sub); border-radius: 20px; padding: 8px 15px; cursor: pointer;">✕ 解除</button>
         </div>
 
         <c:if test="${not empty errorMsg}">
@@ -196,35 +189,33 @@
                             <c:if test="${not empty mutter.image}">
                                 <img src="images/${mutter.image}" style="max-width:100%; border-radius:12px; margin-top:10px; border: 1px solid var(--border);">
                             </c:if>
-                            
                             <div style="margin-top: 10px; display: flex; gap: 15px; align-items: center;">
                                 <button type="button" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:0.8rem;" onclick="setReply('${mutter.id}', '${mutter.userName}')">💬 返信する</button>
-                                <button type="button" onclick="pressNiku(this, '${mutter.id}')" 
-                                        style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:0.8rem; display: flex; align-items: center; gap: 4px; transition: 0.2s;">
+                                <button type="button" onclick="pressNiku(this, '${mutter.id}')" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:0.8rem; display: flex; align-items: center; gap: 4px;">
                                     🐾 <span class="niku-count">${mutter.likeCount}</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+                    <%-- 返信ループ：自分自身を表示しないようにガード --%>
                     <c:forEach var="reply" items="${mutterList}">
-    <%-- ★追加：返信のIDが親のIDと一致し、かつ、自分自身（reply.id != mutter.id）でない場合のみ表示 --%>
-    <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
-        <div class="reply-card">
-            <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="reply-icon">
-            <div style="flex: 1;">
-                <div style="display:flex; align-items: center;">
-                    <span class="user-name-link" style="font-size:0.85rem;"><c:out value="${reply.userName}" /></span>
-                    <span class="date"><c:out value="${reply.createdAt}" /></span>
-                    <a href="Delete?id=${reply.id}" onclick="return confirm('削除しますか？')" class="delete-link">×</a>
-                </div>
-                <div class="content" style="font-size: 0.9rem;"><c:out value="${reply.text}" /></div>
-                <c:if test="${not empty reply.image}">
-                    <img src="images/${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
-                </c:if>
-            </div>
-        </div>
-    </c:if>
-</c:forEach>
+                        <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
+                            <div class="reply-card">
+                                <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="reply-icon">
+                                <div style="flex: 1;">
+                                    <div style="display:flex; align-items: center;">
+                                        <span class="user-name-link" style="font-size:0.85rem;"><c:out value="${reply.userName}" /></span>
+                                        <span class="date"><c:out value="${reply.createdAt}" /></span>
+                                        <a href="Delete?id=${reply.id}" onclick="return confirm('削除しますか？')" class="delete-link">×</a>
+                                    </div>
+                                    <div class="content" style="font-size: 0.9rem;"><c:out value="${reply.text}" /></div>
+                                    <c:if test="${not empty reply.image}">
+                                        <img src="images/${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
+                                    </c:if>
+                                </div>
+                            </div>
+                        </c:if>
+                    </c:forEach>
                 </div>
             </c:if>
         </c:forEach>
