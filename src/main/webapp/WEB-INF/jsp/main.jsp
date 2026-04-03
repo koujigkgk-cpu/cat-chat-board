@@ -60,10 +60,7 @@
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
     /* ★修正: 1050pxでの非表示を削除 */
-    @media (max-width: 800px) {
-        .side-column { display: none; }
-        .center-column { border: none; }
-    }
+   
 </style>
 
 <script>
