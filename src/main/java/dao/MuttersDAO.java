@@ -4,24 +4,28 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import model.Mutter;
 
 public class MuttersDAO {
-    // Supabaseの接続情報
     private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres";
     private final String DB_USER = "postgres";
-    private final String DB_PASS = "あなたのパスワード"; // ★ここを自分のパスワードに！
+    private final String DB_PASS = "あなたのパスワード"; // ★ご自身のパスワードに書き換えてください
 
     public List<Mutter> findAll() {
         List<Mutter> mutterList = new ArrayList<>();
         try {
             Class.forName("org.postgresql.Driver");
             try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-                // 最新の投稿が上にくるように ID の降順で取得
-                String sql = "SELECT id, name, text, reply_id, image, created_at FROM mutters ORDER BY id DESC";
+                // SQLでいいねの数(like_count)も一緒に取得
+                String sql = "SELECT m.id, m.name, m.text, m.reply_id, m.image, m.created_at, " +
+                             "COUNT(l.id) AS like_count " +
+                             "FROM mutters m " +
+                             "LEFT JOIN likes l ON m.id = l.mutter_id " +
+                             "GROUP BY m.id, m.name, m.text, m.reply_id, m.image, m.created_at " +
+                             "ORDER BY m.id DESC";
+                
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery();
 
@@ -31,8 +35,12 @@ public class MuttersDAO {
                     String text = rs.getString("text");
                     int replyId = rs.getInt("reply_id");
                     String image = rs.getString("image");
-                    // 必要に応じて model.Mutter のコンストラクタに合わせて調整してください
-                    Mutter mutter = new Mutter(id, name, text, replyId, image);
+                    String createdAt = rs.getTimestamp("created_at").toString();
+                    int likeCount = rs.getInt("like_count");
+
+                    // ★Mutter.java のコンストラクタ (int, String, String, String, String, int, int) に合わせます
+                    // 順番: id, userName, text, image, createdAt, replyId, likeCount
+                    Mutter mutter = new Mutter(id, name, text, image, createdAt, replyId, likeCount);
                     mutterList.add(mutter);
                 }
             }
