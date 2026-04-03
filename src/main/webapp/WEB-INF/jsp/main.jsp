@@ -57,7 +57,7 @@
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
     @media (max-width: 768px) {
-        .side-column { display: none; }
+        
         .center-column { border: none; }
     }
 </style>
