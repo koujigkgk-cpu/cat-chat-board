@@ -61,7 +61,7 @@
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
     /* レスポンシブ: スマホ（600px以下）の時だけサイドバーを消す */
-    @media (max-width: 600px) {
+    @media (max-width: 300px) {
         .side-column { display: none !important; }
     }
 </style>
