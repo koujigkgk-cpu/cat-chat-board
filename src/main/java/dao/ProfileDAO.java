@@ -10,8 +10,8 @@ import model.Profile;
 public class ProfileDAO {
     // Supabaseの接続情報
     // 修正後のURL例（ポートを6543にし、末尾にオプションを追加）
-private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:6543/postgres?tcpKeepAlive=true&prepareThreshold=0";
-    private final String DB_USER = "postgres";
+// ポートを5432にし、クラウド接続を安定させるオプションをすべて盛り込みました
+private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres?sslmode=require&tcpKeepAlive=true&prepareThreshold=0";    private final String DB_USER = "postgres";
     private final String DB_PASS = "carp8912carp"; // ★自分のパスワードに書き換え
 
     public Profile findByUserId(String userId) {
