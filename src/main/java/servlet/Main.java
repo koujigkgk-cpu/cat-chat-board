@@ -5,7 +5,7 @@ import java.util.List;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet; // MultipartConfigは不要になるため削除
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,31 +23,34 @@ public class Main extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // つぶやきリストの取得
+        // 1. つぶやきリストの取得 (Logic経由)
         GetMutterListLogic getMutterListLogic = new GetMutterListLogic();
         List<Mutter> mutterList = getMutterListLogic.execute();
         request.setAttribute("mutterList", mutterList);
         
-        // ユーザー情報の取得
+        // 2. ユーザー情報の取得
         HttpSession session = request.getSession();
         User loginUser = (User) session.getAttribute("loginUser");
 
-        // プロフィール情報の取得
+        // 3. ログイン済みならプロフィール情報も取得
         if (loginUser != null) {
             ProfileDAO profileDao = new ProfileDAO();
             Profile profile = profileDao.findByUserId(loginUser.getId());
             request.setAttribute("profile", profile);
+            
+            // フォワード
+            RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/main.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            // 未ログインならインデックスへ
+            response.sendRedirect("index.jsp");
         }
-
-        // フォワード
-        RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/main.jsp");
-        dispatcher.forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         
-        // セッションとログインユーザーのチェック
+        // 1. ログインチェック
         HttpSession session = request.getSession();
         User loginUser = (User) session.getAttribute("loginUser");
 
@@ -56,17 +59,19 @@ public class Main extends HttpServlet {
             return;
         }
 
+        // 2. パラメータの取得
         String text = request.getParameter("text");
         String replyIdStr = request.getParameter("replyId");
         
-        // ★重要: JSPのJavaScriptから送られてくる「Supabase上の画像URL」を取得
+        // ★重要: JSがセットしたSupabase上の画像URLを受け取る
+        // main.jspの <input type="hidden" name="supabaseImageUrl"> と一致させています
         String imageUrl = request.getParameter("supabaseImageUrl"); 
 
         int replyId = 0;
         boolean isSuccess = false;
 
         try {
-            // 1. 返信IDの解析
+            // 返信IDのパース
             if(replyIdStr != null && !replyIdStr.isEmpty()) {
                 try { 
                     replyId = Integer.parseInt(replyIdStr); 
@@ -75,12 +80,11 @@ public class Main extends HttpServlet {
                 }
             }
 
-            // 2. 投稿処理
+            // 3. 投稿処理の実行
             if (text != null && !text.trim().isEmpty()) {
-                // ファイル保存処理（part.writeなど）はすべてJavaScript側に移行したため
-                // ここでは受け取ったimageUrlをそのままMutterオブジェクトにセットします
-                
+                // Java側では画像保存処理はせず、受け取ったURLをそのままMutterに渡す
                 Mutter mutter = new Mutter(loginUser.getName(), text, imageUrl, replyId);
+                
                 PostMutterLogic postMutterLogic = new PostMutterLogic();
                 postMutterLogic.execute(mutter);
                 
@@ -91,14 +95,15 @@ public class Main extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMsg", "投稿処理中にエラーが発生しました。");
+            request.setAttribute("errorMsg", "システムエラーが発生しました。");
         }
 
-        // 3. 結果に応じた画面遷移
+        // 4. 処理結果に応じた遷移
         if (isSuccess) {
+            // 二重投稿防止のためリダイレクト
             response.sendRedirect("Main");
         } else {
-            // 失敗時はリストを再取得してフォワード
+            // 失敗時は現在の情報を再セットして入力画面(JSP)へ
             GetMutterListLogic getMutterListLogic = new GetMutterListLogic();
             List<Mutter> mutterList = getMutterListLogic.execute();
             request.setAttribute("mutterList", mutterList);
