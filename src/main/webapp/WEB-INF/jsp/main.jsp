@@ -69,9 +69,9 @@
 </style>
 
 <script>
-    // ★Supabaseの設定（ご自身のプロジェクトの値に書き換えてください）
-    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-    const SUPABASE_KEY = 'YOUR_ANON_KEY';
+    // ★Supabaseの設定：修正完了済み！
+    const SUPABASE_URL = 'https://arpakswzlfpntdwrrghy.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_vH_hoR1yyE8hOcRsQ0XJQw_LlSHbr3E'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // ★投稿処理（画像アップロードを含む）
@@ -113,12 +113,12 @@
                 document.getElementById('supabaseImageUrl').value = publicData.publicUrl;
             }
 
-            // 4. サーバーへ送信
+            // 4. サーバーへ送信（JavaのMain.javaへ飛ばす）
             form.submit();
 
         } catch (error) {
             console.error('Upload error:', error);
-            alert('画像の送信に失敗しました。');
+            alert('画像の送信に失敗しました。コンソールを確認してください。');
             submitBtn.disabled = false;
             submitBtn.value = "つぶやく";
         }
