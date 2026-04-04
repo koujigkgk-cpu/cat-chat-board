@@ -11,7 +11,7 @@ import model.Mutter;
 public class MuttersDAO {
     private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres";
     private final String DB_USER = "postgres";
-    private final String DB_PASS = "あなたのパスワード"; // ★ご自身のパスワードに書き換えてください
+    private final String DB_PASS = "carp8912carp"; // ★ご自身のパスワードに書き換えてください
 
     public List<Mutter> findAll() {
         List<Mutter> mutterList = new ArrayList<>();
