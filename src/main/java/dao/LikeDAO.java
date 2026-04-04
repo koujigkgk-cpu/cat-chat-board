@@ -7,10 +7,9 @@ import java.sql.ResultSet;
 
 public class LikeDAO {
     // Supabaseの接続情報に変更
-    private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres";
-    private final String DB_USER = "postgres";
-    private final String DB_PASS = "あなたのパスワード"; // ★Supabaseで設定したパスワードに変更してください
-
+    private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
+    private final String DB_USER = "postgres.arpakswzlfpntdwrrghy"; 
+    private final String DB_PASS = "carp8912carp";
     public int toggleLike(int mutterId, String userName) {
         try {
             // PostgreSQLのドライバをロード
