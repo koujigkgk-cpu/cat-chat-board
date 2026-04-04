@@ -14,9 +14,14 @@ public class ProfileDAO {
 // 修正前: ...co:5432/postgres?sslmode=require...
 // 修正後: 以下のURLにまるごと差し替えてみてください
 // これが「Java専用」の接続伝票です
-private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require"; 
-private final String DB_USER = "postgres";
-    private final String DB_PASS = "carp8912carp";
+// ホスト名を新しい [aws-1...] に書き換え、SSL設定を維持します
+private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
+
+// ユーザー名に「.プロジェクトID」がついていることを確認
+private final String DB_USER = "postgres.arpakswzlfpntdwrrghy";
+
+// パスワードは以前のものと同じです
+private final String DB_PASS = "carp8912carp";
     
     public Profile findByUserId(String userId) {
         Profile profile = null;
