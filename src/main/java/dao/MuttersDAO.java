@@ -13,7 +13,8 @@ public class MuttersDAO {
 // ポートを5432にし、クラウド接続を安定させるオプションをすべて盛り込みました
 // 修正前: ...co:5432/postgres?sslmode=require...
 // 修正後: 以下のURLにまるごと差し替えてみてください
-private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:6543/postgres?sslmode=require&prepareThreshold=0";    
+// これが「Java専用」の接続伝票です
+private final String JDBC_URL = "jdbc:postgresql://15.168.42.202:6543/postgres?sslmode=require&prepareThreshold=0";   
 private final String DB_USER = "postgres";
     
     // 3. パスワード
