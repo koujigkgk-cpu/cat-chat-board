@@ -63,7 +63,7 @@
     #cat-trivia { font-size: 0.85rem; line-height: 1.6; min-height: 50px; }
     .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline; }
 
-    @media (max-width: 300px) {
+    @media (max-width: 150px) {
         .side-column { display: none !important; }
     }
 </style>
