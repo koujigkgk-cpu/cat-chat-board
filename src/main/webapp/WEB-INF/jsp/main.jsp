@@ -59,19 +59,43 @@
     .pc-only { display: block; }
 
     /* --- スマホ専用の2列レイアウト設定 --- */
+   /* --- ここから：スマホ専用の2列レイアウト設定 --- */
     @media (max-width: 768px) {
         .app-container { display: flex !important; flex-direction: row !important; gap: 8px; padding: 0 5px; align-items: flex-start; }
-        .side-column { width: 32% !important; margin-top: 20px !important; position: static !important; }
-        .main-column { width: 66% !important; flex-grow: 1; min-width: 0; }
-        .pc-only { display: none !important; } /* PC用右カラムを消す */
-        .mobile-only { display: block !important; } /* 左カラム内のスマホ用要素を出す */
         
-        .glass-card { padding: 10px 5px; margin-bottom: 10px; border-radius: 8px; }
-        .profile-avatar { width: 40px; height: 40px; }
-        .stats, .btn-side, .trivia-title, #cat-trivia, ul { font-size: 9px !important; }
-        h1 { font-size: 1rem; padding: 10px; }
-        .mutter-icon { width: 32px; height: 32px; }
+        /* 左サイドバーの設定 */
+        .side-column { width: 32% !important; margin-top: 20px !important; position: static !important; display: block !important; }
+        
+        /* メインカラムの設定（はみ出し防止） */
+        .main-column { width: 66% !important; flex-grow: 1; min-width: 0; border: none; }
+
+        .pc-only { display: none !important; }
+        .mobile-only { display: block !important; }
+        
+        /* カードと文字のサイズ微調整（ここがお尋ねの箇所です） */
+        .glass-card { padding: 10px 8px; margin-bottom: 10px; border-radius: 10px; }
+        .profile-avatar { width: 50px; height: 50px; }
+        
+        /* 豆知識テキストとはみ出し制御 */
+        .cat-trivia-display { 
+            font-size: 0.75rem !important; 
+            line-height: 1.4; 
+            word-break: break-all; 
+        }
+        
+        /* ボタンのサイズ調整 */
+        .btn-refresh {
+            font-size: 0.7rem !important;
+            margin-top: 5px;
+        }
+
+        /* 投稿エリアのボタンを縦に並べてはみ出しを完全に防ぐ */
+        .post-actions { flex-direction: column; align-items: flex-start; }
+        input[type="button"] { width: 100%; margin-top: 5px; }
+
+        h1 { font-size: 1.1rem; padding: 15px 10px; }
     }
+    /* --- ここまで --- */
 </style>
 
 <script>
@@ -202,17 +226,20 @@
         </div>
 
         <div class="mobile-only">
-            <div class="glass-card">
-                <h4 class="trivia-title">🐾 豆知識</h4>
-                <p class="cat-trivia-display" style="font-size:0.8rem;"></p>
-            </div>
-            <div class="glass-card">
-                <ul style="list-style:none; padding:0; font-size:0.8rem; color:var(--accent);">
-                    <li>#Java学習中</li>
-                </ul>
-            </div>
-        </div>
-    </aside>
+    <div class="glass-card">
+        <h4 class="trivia-title">🐾 豆知識</h4>
+        <p class="cat-trivia-display" id="cat-trivia-mobile"></p>
+        <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
+    </div>
+</div>
+
+<aside class="side-column pc-only">
+    <div class="glass-card">
+        <h4 class="trivia-title">🐾 猫の豆知識</h4>
+        <p class="cat-trivia-display" id="cat-trivia-pc"></p>
+        <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
+    </div>
+</aside>
 
     <main class="center-column main-column">
         <h1>キャット板</h1>
