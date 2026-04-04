@@ -14,7 +14,11 @@ public class MuttersDAO {
 // 修正前: ...co:5432/postgres?sslmode=require...
 // 修正後: 以下のURLにまるごと差し替えてみてください
 private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:6543/postgres?sslmode=require&prepareThreshold=0";    
-
+private final String DB_USER = "postgres";
+    
+    // 3. パスワード
+    private final String DB_PASS = "carp8912carp";
+    
     public List<Mutter> findAll() {
         List<Mutter> mutterList = new ArrayList<>();
         try {
