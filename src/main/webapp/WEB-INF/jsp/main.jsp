@@ -288,10 +288,18 @@
             </div>
         </form>
 
-        <div class="mutter-list">
-        <c:forEach var="mutter" items="${mutterList}">
+       <div class="mutter-list">
+        <%-- 
+            ステップ1: 親投稿（replyId == 0）だけを新しい順（リストの最後から）に表示 
+            items="${mutterList}" を begin="0" end="${mutterList.size()-1}" で回し、
+            インデックスを [size - 1 - i] とすることで降順を実現します。
+        --%>
+        <c:forEach var="i" begin="0" end="${mutterList.size() - 1}">
+            <c:set var="mutter" value="${mutterList[mutterList.size() - 1 - i]}" />
+            
             <c:if test="${mutter.replyId == 0}">
                 <div class="thread-group">
+                    <%-- 親投稿の表示 --%>
                     <div class="mutter-card">
                         <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="mutter-icon">
                         <div style="flex: 1;">
@@ -315,6 +323,10 @@
                         </div>
                     </div>
                     
+                    <%-- 
+                        ステップ2: その親に対する返信を「古い順（正順）」に表示 
+                        ここは通常の c:forEach で回すことで、投稿された順（新しいものが下）になります。
+                    --%>
                     <c:forEach var="reply" items="${mutterList}">
                         <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
                             <div class="reply-card">
