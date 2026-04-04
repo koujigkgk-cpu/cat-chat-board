@@ -14,7 +14,6 @@
         --accent: #58a6ff; 
         --text-sub: #8b949e; 
         --border: rgba(255, 255, 255, 0.1);
-        --danger: #ff7b72;
         --glass: rgba(255, 255, 255, 0.03);
     }
     body {
@@ -24,186 +23,142 @@
         background: radial-gradient(circle at center, #1a2a44 0%, #050a14 100%) fixed;
     }
 
+    /* 基本レイアウト (PC) */
     .app-container { display: flex; justify-content: center; gap: 24px; max-width: 1250px; margin: 0 auto; padding: 0 20px; }
-    
     .side-column { width: 240px; flex-shrink: 0; position: sticky; top: 20px; height: fit-content; margin-top: 80px; }
     .center-column { flex: 1; max-width: 600px; min-height: 100vh; background: rgba(13, 17, 23, 0.5); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
 
-    h1 { padding: 20px; color: var(--accent); text-align: center; position: sticky; top: 0; background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(10px); z-index: 10; border-bottom: 1px solid var(--border); margin: 0; letter-spacing: 2px; }
+    h1 { padding: 20px; color: var(--accent); text-align: center; position: sticky; top: 0; background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(10px); z-index: 10; border-bottom: 1px solid var(--border); margin: 0; }
 
     .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
     .profile-card { text-align: center; }
     .profile-avatar { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
-    .stats { display: flex; justify-content: center; gap: 20px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 10px; }
-    .btn-side { display: block; margin-top: 15px; padding: 8px; border: 1px solid var(--accent); border-radius: 20px; color: var(--accent); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
-    .btn-side:hover { background: rgba(88, 166, 255, 0.1); }
+    
+    /* 検索窓のスタイル */
+    #searchInput { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; padding: 10px 15px; color: white; margin: 10px 0; box-sizing: border-box; outline: none; font-size: 0.9rem; }
 
+    /* 投稿エリア */
     form { padding: 20px; border-bottom: 8px solid rgba(0,0,0,0.3); }
-    input[type="text"] { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: white; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-    input[type="button"], input[type="submit"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
+    .post-input { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: white; margin-bottom: 10px; box-sizing: border-box; }
+    .post-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    input[type="button"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
 
-    .thread-group { border-bottom: 5px solid rgba(0, 0, 0, 0.5); padding-bottom: 10px; background: rgba(255,255,255,0.01); }
-    .mutter-card { padding: 20px; display: flex; border-left: 3px solid transparent; }
-    .mutter-card:hover { border-left-color: var(--accent); background: rgba(255,255,255,0.02); }
-    
-    .mutter-icon { width: 48px; height: 48px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
-    .reply-card { margin: 0 20px 10px 60px; padding: 12px; background: rgba(88, 166, 255, 0.05); border-radius: 12px; display: flex; border: 1px solid var(--border); border-left: 2px solid var(--accent); }
-    
-    .user-name-link { color: white; font-weight: bold; text-decoration: none; }
-    .date { color: var(--text-sub); font-size: 0.75rem; margin-left: 10px; }
-    .content { margin-top: 5px; white-space: pre-wrap; word-break: break-all; }
-    .delete-link { margin-left: auto; color: var(--text-sub); text-decoration: none; }
+    /* 豆知識とボタン */
+    .trivia-title { font-size: 0.9rem; color: var(--accent); margin: 0 0 8px 0; }
+    .btn-refresh { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 0.75rem; text-decoration: underline; padding: 0; margin-top: 8px; }
 
-    /* PCでは左側の豆知識・ハッシュタグを隠し、右側のカラムを表示する */
     .mobile-only { display: none; }
     .pc-only { display: block; }
 
-    /* --- スマホ専用の2列レイアウト設定 --- */
-   /* --- ここから：スマホ専用の2列レイアウト設定 --- */
+    /* --- スマホ専用設定 (画面幅768px以下) --- */
     @media (max-width: 768px) {
-        .app-container { display: flex !important; flex-direction: row !important; gap: 8px; padding: 0 5px; align-items: flex-start; }
+        .app-container { gap: 8px; padding: 0 5px; align-items: flex-start; }
+        .side-column { width: 33% !important; margin-top: 20px !important; position: static !important; display: block !important; }
+        .center-column { width: 65% !important; flex: none; border: none; }
         
-        /* 左サイドバーの設定 */
-        .side-column { width: 32% !important; margin-top: 20px !important; position: static !important; display: block !important; }
-        
-        /* メインカラムの設定（はみ出し防止） */
-        .main-column { width: 66% !important; flex-grow: 1; min-width: 0; border: none; }
-
         .pc-only { display: none !important; }
         .mobile-only { display: block !important; }
-        
-        /* カードと文字のサイズ微調整（ここがお尋ねの箇所です） */
-        .glass-card { padding: 10px 8px; margin-bottom: 10px; border-radius: 10px; }
-        .profile-avatar { width: 50px; height: 50px; }
-        
-        /* 豆知識テキストとはみ出し制御 */
-        .cat-trivia-display { 
-            font-size: 0.75rem !important; 
-            line-height: 1.4; 
-            word-break: break-all; 
-        }
-        
-        /* ボタンのサイズ調整 */
-        .btn-refresh {
-            font-size: 0.7rem !important;
-            margin-top: 5px;
-        }
 
-        /* 投稿エリアのボタンを縦に並べてはみ出しを完全に防ぐ */
-        .post-actions { flex-direction: column; align-items: flex-start; }
-        input[type="button"] { width: 100%; margin-top: 5px; }
+        /* はみ出し防止: ボタンを縦に並べる */
+        .post-actions { flex-direction: column; align-items: stretch; }
+        #imageInput { font-size: 0.7rem; width: 100%; }
+        input[type="button"] { width: 100%; margin-top: 5px; padding: 8px; }
 
-        h1 { font-size: 1.1rem; padding: 15px 10px; }
+        /* 文字サイズの最適化 */
+        .glass-card { padding: 10px 8px; border-radius: 10px; }
+        .profile-avatar { width: 45px; height: 45px; }
+        .cat-trivia-display { font-size: 0.75rem !important; line-height: 1.4; word-break: break-all; }
+        .btn-refresh { font-size: 0.7rem; }
+        h1 { font-size: 1.1rem; padding: 10px; }
+        #searchInput { font-size: 0.8rem; padding: 8px; }
     }
-    /* --- ここまで --- */
 </style>
 
 <script>
-    const SUPABASE_URL = 'https://arpakswzlfpntdwrrghy.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_vH_hoR1yyE8hOcRsQ0XJQw_LlSHbr3E'; 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+    const trivias = [
+        "猫の鼻紋は一匹ずつ違います。",
+        "猫は一生の約3分の2を寝て過ごします。",
+        "猫は時速約48キロメートルで走ることができます。",
+        "猫の耳は180度回転させることができます。",
+        "猫がゴロゴロ鳴らすのは怪我を治すためという説もあります。",
+        "猫は甘みを感じることができません。",
+        "猫は自分の体高の約5倍から6倍の高さをジャンプできます。",
+        "猫の利き手は、オスは左、メスは右が多い傾向にあります。",
+        "猫には鎖骨がないため、頭が通る隙間なら通り抜けられます。",
+        "猫は足の裏（肉球）でしか汗をかきません。",
+        "猫の前足の指は5本、後ろ足の指は4本です。",
+        "猫の血液型はA型、B型、AB型の3種類で, A型が圧倒的に多いです。",
+        "猫は「立ち直り反射」により、空中で体勢を立て直して着地できます。",
+        "すべての子猫は生まれた時、目が青い（キトンブルー）です。",
+        "猫には「瞬膜」という第3のまぶたがあります。",
+        "猫の平熱は38度から39度で、人間より少し高いです。",
+        "猫の心拍数は1分間に120回から140回で、人間の約2倍です。",
+        "猫の視野は約200度あり、人間よりも広範囲を見渡せます。",
+        "猫は人間の約6分の1の光があれば暗闇でも物が見えます。",
+        "猫のヒゲの向きで、その時の感情を読み取ることができます。",
+        "猫の手首の裏側にも、獲物を察知するためのヒゲが生えています。",
+        "猫の舌のザラザラは、骨から肉を削ぎ落とす役割があります。",
+        "猫の腎臓は非常に優秀で、海水を飲んでも水分補給が可能です。",
+        "猫の骨の数は約230個で、人間（約200個）よりも多いです。",
+        "エジプシャン・マウという猫種は、時速約48kmで走ると言われています。",
+        "猫が口を半開きにする「フレーメン反応」は、臭いを味わっています。",
+        "片方の耳だけで32個の筋肉があり、耳を別々に動かせます。",
+        "猫は犬よりも高い音（ネズミの超音波など）を聞き取れます。",
+        "猫は苦味と酸味には非常に敏感ですが、甘みはわかりません。",
+        "猫が最も美味しく感じる食べ物の温度は、獲物の体温に近い35度前後です。",
+        "猫は溜まった水よりも、蛇口などの流れている水を好むことが多いです。",
+        "すべての猫がマタタビに反応するわけではなく、遺伝で決まります。",
+        "夜に猫が集まる「猫の集会」は、縄張りの確認などの親睦会です。",
+        "砂をかけるのは、自分の臭いを消して敵から身を守る野生の名残です。",
+        "「ふみふみ」する動作は、母猫の乳を出すための名残で甘えています。",
+        "猫同士が鼻をくっつけるのは、身元を確認し合う挨拶です。",
+        "家具などに体をこすりつけるのは、自分の臭いをつけるマーキングです。",
+        "飼い主に獲物を持ってくるのは、狩りを教えようとしている説があります。",
+        "猫が狭いところを好むのは、外敵に見つからず安心できるからです。",
+        "猫がゆっくりまばたきをするのは、相手を信頼している証拠です。",
+        "猫が高い場所を好むのは、獲物を見つけやすく安全だからです。",
+        "成猫が「ニャー」と鳴くのは、主に人間に対しての要求です。",
+        "約9500年前の遺跡から、人間と猫が一緒に埋葬された骨が見つかっています。",
+        "1963年、フランスの猫「フェリセット」が宇宙飛行に成功しました。",
+        "ギネス記録に残る最も長生きした猫は、38歳と3日です。",
+        "作家ヘミングウェイは、指が6本ある多指症の猫を愛しました。",
+        "英語で猫の集団（群れ）のことを「Clowder（クラウダー）」と呼びます。",
+        "アラスカのある町では、猫の「スタッブス」が20年間市長を務めました。",
+        "船のネズミを駆除するため、昔から猫は「船乗り猫」として重宝されました。",
+        "物理学者ニュートンが、猫専用の出入り口を考案したという説があります。"
+    ];
 
-    async function handlePost() {
-        const form = document.getElementById('postForm');
-        const fileInput = document.getElementById('imageInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const textInput = form.querySelector('input[name="text"]');
-        const file = fileInput.files[0];
-
-        if (!textInput.value.trim()) { alert("つぶやきを入力してください"); return; }
-        submitBtn.disabled = true; submitBtn.value = "送信中...";
-
-        try {
-            if (file) {
-                const fileExt = file.name.split('.').pop();
-                const fileName = Date.now() + "." + fileExt;
-                const { data, error } = await _supabase.storage.from('images').upload(fileName, file);
-                if (error) throw error;
-                const { data: publicData } = _supabase.storage.from('images').getPublicUrl(fileName);
-                document.getElementById('supabaseImageUrl').value = publicData.publicUrl;
-            }
-            form.submit();
-        } catch (error) {
-            console.error('Upload error:', error);
-            alert('送信失敗'); submitBtn.disabled = false; submitBtn.value = "つぶやく";
-        }
-    }
-
-    function setReply(id, name) {
-        document.getElementById('replyIdField').value = id;
-        document.getElementById('reply-target-name').innerText = name + " さんに返信中";
-        document.getElementById('reply-label').style.display = 'flex';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function cancelReply() {
-        document.getElementById('replyIdField').value = '0';
-        document.getElementById('reply-label').style.display = 'none';
-    }
-    
-    const trivias = [ "猫の鼻紋は一匹ずつ違います。",
-    "猫は一生の約3分の2を寝て過ごします。",
-    "猫は時速約48キロメートルで走ることができます。",
-    "猫の耳は180度回転させることができます。",
-    "猫がゴロゴロ鳴らすのは怪我を治すためという説もあります。",
-    "猫は甘みを感じることができません。",
-    "猫は自分の体高の約5倍から6倍の高さをジャンプできます。",
-    "猫の利き手は、オスは左、メスは右が多い傾向にあります。",
-    "猫には鎖骨がないため、頭が通る隙間なら通り抜けられます。",
-    "猫は足の裏（肉球）でしか汗をかきません。",
-    "猫の前足の指は5本、後ろ足の指は4本です。",
-    "猫の血液型はA型、B型、AB型の3種類で、A型が圧倒的に多いです。",
-    "猫は「立ち直り反射」により、空中で体勢を立て直して着地できます。",
-    "すべての子猫は生まれた時、目が青い（キトンブルー）です。",
-    "猫には「瞬膜」という第3のまぶたがあります。",
-    "猫の平熱は38度から39度で、人間より少し高いです。",
-    "猫の心拍数は1分間に120回から140回で、人間の約2倍です。",
-    "猫の視野は約200度あり、人間よりも広範囲を見渡せます。",
-    "猫は人間の約6分の1の光があれば暗闇でも物が見えます。",
-    "猫のヒゲの向きで、その時の感情を読み取ることができます。",
-    "猫の手首の裏側にも、獲物を察知するためのヒゲが生えています。",
-    "猫の舌のザラザラは、骨から肉を削ぎ落とす役割があります。",
-    "猫の腎臓は非常に優秀で、海水を飲んでも水分補給が可能です。",
-    "猫の骨の数は約230個で、人間（約200個）よりも多いです。",
-    "エジプシャン・マウという猫種は、時速約48kmで走ると言われています。",
-    "猫が口を半開きにする「フレーメン反応」は、臭いを味わっています。",
-    "片方の耳だけで32個の筋肉があり、耳を別々に動かせます。",
-    "猫は犬よりも高い音（ネズミの超音波など）を聞き取れます。",
-    "猫は苦味と酸味には非常に敏感ですが、甘みはわかりません。",
-    "猫が最も美味しく感じる食べ物の温度は、獲物の体温に近い35度前後です。",
-    "猫は溜まった水よりも、蛇口などの流れている水を好むことが多いです。",
-    "すべての猫がマタタビに反応するわけではなく、遺伝で決まります。",
-    "夜に猫が集まる「猫の集会」は、縄張りの確認などの親睦会です。",
-    "砂をかけるのは、自分の臭いを消して敵から身を守る野生の名残です。",
-    "「ふみふみ」する動作は、母猫の乳を出すための名残で甘えています。",
-    "猫同士が鼻をくっつけるのは、身元を確認し合う挨拶です。",
-    "家具などに体をこすりつけるのは、自分の臭いをつけるマーキングです。",
-    "飼い主に獲物を持ってくるのは、狩りを教えようとしている説があります。",
-    "猫が狭いところを好むのは、外敵に見つからず安心できるからです。",
-    "猫がゆっくりまばたきをするのは、相手を信頼している証拠です。",
-    "猫が高い場所を好むのは、獲物を見つけやすく安全だからです。",
-    "成猫が「ニャー」と鳴くのは、主に人間に対しての要求です。",
-    "約9500年前の遺跡から、人間と猫が一緒に埋葬された骨が見つかっています。",
-    "1963年、フランスの猫「フェリセット」が宇宙飛行に成功しました。",
-    "ギネス記録に残る最も長生きした猫は、38歳と3日です。",
-    "作家ヘミングウェイは、指が6本ある多指症の猫を愛しました。",
-    "英語で猫の集団（群れ）のことを「Clowder（クラウダー）」と呼びます。",
-    "アラスカのある町では、猫の「スタッブス」が20年間市長を務めました。",
-    "船のネズミを駆除するため、昔から猫は「船乗り猫」として重宝されました。",
-    "物理学者ニュートンが、猫専用の出入り口を考案したという説があります。"];
     function updateTrivia() {
         const randomIndex = Math.floor(Math.random() * trivias.length);
-        const triviaElements = document.querySelectorAll('.cat-trivia-display');
-        triviaElements.forEach(el => el.innerText = trivias[randomIndex]);
+        document.querySelectorAll('.cat-trivia-display').forEach(el => {
+            el.innerText = trivias[randomIndex];
+        });
     }
 
-    document.addEventListener('input', (e) => {
-        if (e.target.id === 'searchInput') {
-            const word = e.target.value.toLowerCase();
-            document.querySelectorAll('.thread-group').forEach(thread => {
-                thread.style.display = thread.innerText.toLowerCase().includes(word) ? "" : "none";
-            });
-        }
-    });
+    // 検索機能
+    function filterPosts() {
+        const word = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('.thread-group').forEach(thread => {
+            thread.style.display = thread.innerText.toLowerCase().includes(word) ? "" : "none";
+        });
+    }
+</script>
+
+    function updateTrivia() {
+        const randomIndex = Math.floor(Math.random() * trivias.length);
+        document.querySelectorAll('.cat-trivia-display').forEach(el => {
+            el.innerText = trivias[randomIndex];
+        });
+    }
+
+    // 検索機能のスクリプト
+    function filterPosts() {
+        const word = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('.thread-group').forEach(thread => {
+            thread.style.display = thread.innerText.toLowerCase().includes(word) ? "" : "none";
+        });
+    }
 </script>
 </head>
 <body onload="updateTrivia()">
@@ -213,63 +168,46 @@
     <aside class="side-column">
         <div class="glass-card profile-card">
             <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="profile-avatar">
-            <c:choose>
-                <c:when test="${not empty loginUser}">
-                    <div style="font-weight: bold;"><c:out value="${loginUser.name}" /></div>
-                    <a href="ProfileServlet" class="btn-side">Profile</a>
-                    <a href="Logout" style="color: var(--text-sub); font-size: 0.75rem; text-decoration: none; display: block; margin-top: 10px;">Logout</a>
-                </c:when>
-                <c:otherwise>
-                    <div style="font-weight: bold;">ゲスト</div><a href="index.jsp" class="btn-side">Login</a>
-                </c:otherwise>
-            </c:choose>
+            <div style="font-weight: bold; font-size: 0.9rem;"><c:out value="${loginUser.name}" /></div>
+            <a href="ProfileServlet" style="color: var(--accent); text-decoration:none; font-size:0.8rem; display:block; margin-top:10px;">Profile</a>
         </div>
 
         <div class="mobile-only">
-    <div class="glass-card">
-        <h4 class="trivia-title">🐾 豆知識</h4>
-        <p class="cat-trivia-display" id="cat-trivia-mobile"></p>
-        <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
-    </div>
-</div>
+            <div class="glass-card">
+                <h4 class="trivia-title">🐾 豆知識</h4>
+                <p class="cat-trivia-display"></p>
+                <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
+            </div>
+        </div>
+    </aside>
 
-<aside class="side-column pc-only">
-    <div class="glass-card">
-        <h4 class="trivia-title">🐾 猫の豆知識</h4>
-        <p class="cat-trivia-display" id="cat-trivia-pc"></p>
-        <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
-    </div>
-</aside>
-
-    <main class="center-column main-column">
+    <main class="center-column">
         <h1>キャット板</h1>
+        
+        <div style="padding: 0 20px;">
+            <input type="text" id="searchInput" placeholder="つぶやきを検索..." oninput="filterPosts()">
+        </div>
+
         <form action="Main" method="post" id="postForm">
-            <input type="hidden" name="replyId" id="replyIdField" value="0">
-            <input type="hidden" name="supabaseImageUrl" id="supabaseImageUrl" value="">
-            <input type="text" name="text" placeholder="いまどうしてる？" required>
-            <div style="display: flex; justify-content: space-between;">
-                <input type="file" id="imageInput" style="font-size: 0.7rem;">
+            <input type="text" name="text" class="post-input" placeholder="いまどうしてる？" required>
+            <div class="post-actions">
+                <input type="file" id="imageInput">
                 <input type="button" id="submitBtn" value="つぶやく" onclick="handlePost()">
             </div>
         </form>
 
         <div class="mutter-list">
-        <c:forEach var="mutter" items="${mutterList}">
-            <c:if test="${mutter.replyId == 0}">
-                <div class="thread-group">
-                    <div class="mutter-card">
-                        <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" class="mutter-icon">
-                        <div style="flex: 1;">
-                            <a class="user-name-link"><c:out value="${mutter.userName}" /></a>
-                            <div class="content"><c:out value="${mutter.text}" /></div>
-                            <c:if test="${not empty mutter.image}">
-                                <img src="${mutter.image}" style="max-width:100%; border-radius:12px;">
-                            </c:if>
+            <c:forEach var="mutter" items="${mutterList}">
+                <div class="thread-group" style="padding: 15px; border-bottom: 1px solid var(--border);">
+                    <div style="display: flex; gap: 10px;">
+                        <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" style="width:40px; height:40px; border-radius:50%;">
+                        <div>
+                            <div style="font-weight:bold;"><c:out value="${mutter.userName}" /></div>
+                            <div style="margin-top:5px;"><c:out value="${mutter.text}" /></div>
                         </div>
                     </div>
                 </div>
-            </c:if>
-        </c:forEach>
+            </c:forEach>
         </div>
     </main>
 
@@ -280,11 +218,8 @@
             <button class="btn-refresh" onclick="updateTrivia()">別のを見る</button>
         </div>
         <div class="glass-card">
-            <h4 style="font-size:0.9rem;">注目のハッシュタグ</h4>
-            <ul style="list-style:none; padding:0; font-size:0.85rem; color:var(--accent); line-height:2;">
-                <li>#猫のいる暮らし</li>
-                <li>#Java学習中</li>
-            </ul>
+            <h4 style="font-size:0.9rem;">注目タグ</h4>
+            <p style="color:var(--accent); font-size:0.8rem;">#Java学習中<br>#猫のいる暮らし</p>
         </div>
     </aside>
 
