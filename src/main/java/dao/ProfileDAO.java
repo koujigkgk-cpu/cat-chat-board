@@ -11,7 +11,7 @@ public class ProfileDAO {
     // Supabaseの接続情報
     private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres";
     private final String DB_USER = "postgres";
-    private final String DB_PASS = "あなたのパスワード"; // ★自分のパスワードに書き換え
+    private final String DB_PASS = "carp8912carp"; // ★自分のパスワードに書き換え
 
     public Profile findByUserId(String userId) {
         Profile profile = null;
