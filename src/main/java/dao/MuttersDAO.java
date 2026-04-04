@@ -11,8 +11,9 @@ import model.Mutter;
 public class MuttersDAO {
     // 修正後のURL例（ポートを6543にし、末尾にオプションを追加）
 // ポートを5432にし、クラウド接続を安定させるオプションをすべて盛り込みました
-private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:5432/postgres?sslmode=require&tcpKeepAlive=true&prepareThreshold=0";    private final String DB_USER = "postgres";
-    private final String DB_PASS = "carp8912carp"; // ★ご自身のパスワードに書き換えてください
+// 修正前: ...co:5432/postgres?sslmode=require...
+// 修正後: 以下のURLにまるごと差し替えてみてください
+private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:6543/postgres?sslmode=require&prepareThreshold=0";    private final String DB_PASS = "carp8912carp"; // ★ご自身のパスワードに書き換えてください
 
     public List<Mutter> findAll() {
         List<Mutter> mutterList = new ArrayList<>();
