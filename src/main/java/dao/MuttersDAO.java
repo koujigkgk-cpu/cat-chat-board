@@ -10,7 +10,7 @@ import model.Mutter;
 
 public class MuttersDAO {
     // 修正後のURL例（ポートを6543にし、末尾にオプションを追加）
-private final String JDBC_URL = "jdbc:postgresql://db.xxxx.supabase.co:6543/postgres?tcpKeepAlive=true&prepareThreshold=0";
+private final String JDBC_URL = "jdbc:postgresql://db.arpakswzlfpntdwrrghy.supabase.co:6543/postgres?tcpKeepAlive=true&prepareThreshold=0";
     private final String DB_USER = "postgres";
     private final String DB_PASS = "carp8912carp"; // ★ご自身のパスワードに書き換えてください
 
