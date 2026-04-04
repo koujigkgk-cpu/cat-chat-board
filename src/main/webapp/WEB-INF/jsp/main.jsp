@@ -6,6 +6,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>キャット板 - タイムライン</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
     :root {
         --accent: #58a6ff; 
@@ -37,7 +40,8 @@
 
     form { padding: 20px; border-bottom: 8px solid rgba(0,0,0,0.3); }
     input[type="text"] { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: white; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-    input[type="submit"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
+    input[type="button"], input[type="submit"] { background: var(--accent); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: bold; cursor: pointer; }
+    input[type="button"]:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
 
     .thread-group { border-bottom: 5px solid rgba(0, 0, 0, 0.5); padding-bottom: 10px; background: rgba(255,255,255,0.01); }
     .mutter-card { padding: 20px; display: flex; border-left: 3px solid transparent; }
@@ -65,6 +69,62 @@
 </style>
 
 <script>
+    // ★Supabaseの設定（ご自身のプロジェクトの値に書き換えてください）
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_KEY = 'YOUR_ANON_KEY';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ★投稿処理（画像アップロードを含む）
+    async function handlePost() {
+        const form = document.getElementById('postForm');
+        const fileInput = document.getElementById('imageInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const textInput = form.querySelector('input[name="text"]');
+        const file = fileInput.files[0];
+
+        // バリデーション
+        if (!textInput.value.trim()) {
+            alert("つぶやきを入力してください");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.value = "送信中...";
+
+        try {
+            if (file) {
+                // ファイル名の作成（重複回避）
+                const fileExt = file.name.split('.').pop();
+                const fileName = Date.now() + "." + fileExt;
+                
+                // 1. Supabase Storageへアップロード
+                const { data, error } = await _supabase.storage
+                    .from('images') 
+                    .upload(fileName, file);
+
+                if (error) throw error;
+
+                // 2. 公開URLを取得
+                const { data: publicData } = _supabase.storage
+                    .from('images')
+                    .getPublicUrl(fileName);
+
+                // 3. URLを隠しフィールドにセット
+                document.getElementById('supabaseImageUrl').value = publicData.publicUrl;
+            }
+
+            // 4. サーバーへ送信
+            form.submit();
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('画像の送信に失敗しました。');
+            submitBtn.disabled = false;
+            submitBtn.value = "つぶやく";
+        }
+    }
+
+    // --- 既存の機能スクリプト ---
     function setReply(id, name) {
         document.getElementById('replyIdField').value = id;
         document.getElementById('reply-target-name').innerText = name + " さんに返信中";
@@ -106,7 +166,6 @@
         document.getElementById('clearBtn').style.display = "none";
     }
 
-    // ★修正版: 肉球ボタン（いいね）処理
     function pressNiku(btn, mutterId) {
         const params = new URLSearchParams();
         params.append('mutterId', mutterId);
@@ -114,28 +173,21 @@
         fetch('LikeServlet', { 
             method: 'POST', 
             body: params,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(res => {
             if (!res.ok) throw new Error('Network response was not ok');
             return res.text();
         })
         .then(count => {
-            // カウントを更新
             const countSpan = btn.querySelector('.niku-count');
             if (countSpan) countSpan.innerText = count;
-            
-            // アニメーション演出
             btn.style.color = "#ff7eb9";
             btn.style.transition = "0.2s";
             btn.style.transform = "scale(1.3)";
             setTimeout(() => { btn.style.transform = "scale(1)"; }, 200);
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => console.error('Error:', error));
     }
 </script>
 </head>
@@ -177,16 +229,18 @@
             <div class="error-banner"><c:out value="${errorMsg}" /></div>
         </c:if>
 
-        <form action="Main" method="post" enctype="multipart/form-data">
+        <form action="Main" method="post" id="postForm">
             <input type="hidden" name="replyId" id="replyIdField" value="0">
+            <input type="hidden" name="supabaseImageUrl" id="supabaseImageUrl" value="">
+            
             <div id="reply-label">
                 <span id="reply-target-name"></span>
                 <span style="cursor:pointer;" onclick="cancelReply()">✕ 止める</span>
             </div>
             <input type="text" name="text" placeholder="いまどうしてる？" required>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <input type="file" name="image" style="font-size: 0.7rem; color: var(--text-sub);">
-                <input type="submit" value="つぶやく">
+                <input type="file" id="imageInput" style="font-size: 0.7rem; color: var(--text-sub);">
+                <input type="button" id="submitBtn" value="つぶやく" onclick="handlePost()">
             </div>
         </form>
 
@@ -203,9 +257,11 @@
                                 <a href="Delete?id=${mutter.id}" onclick="return confirm('削除しますか？')" class="delete-link">×</a>
                             </div>
                             <div class="content"><c:out value="${mutter.text}" /></div>
+                            
                             <c:if test="${not empty mutter.image}">
-                                <img src="images/${mutter.image}" style="max-width:100%; border-radius:12px; margin-top:10px; border: 1px solid var(--border);">
+                                <img src="${mutter.image}" style="max-width:100%; border-radius:12px; margin-top:10px; border: 1px solid var(--border);">
                             </c:if>
+                            
                             <div style="margin-top: 10px; display: flex; gap: 15px; align-items: center;">
                                 <button type="button" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:0.8rem;" onclick="setReply('${mutter.id}', '${mutter.userName}')">💬 返信する</button>
                                 <button type="button" onclick="pressNiku(this, '${mutter.id}')" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:0.8rem; display: flex; align-items: center; gap: 4px;">
@@ -214,6 +270,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <c:forEach var="reply" items="${mutterList}">
                         <c:if test="${reply.replyId == mutter.id && reply.id != mutter.id}">
                             <div class="reply-card">
@@ -226,7 +283,7 @@
                                     </div>
                                     <div class="content" style="font-size: 0.9rem;"><c:out value="${reply.text}" /></div>
                                     <c:if test="${not empty reply.image}">
-                                        <img src="images/${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
+                                        <img src="${reply.image}" style="max-width:150px; border-radius:8px; margin-top:8px;">
                                     </c:if>
                                 </div>
                             </div>
