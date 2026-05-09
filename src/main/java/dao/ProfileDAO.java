@@ -21,7 +21,7 @@ private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.s
 private final String DB_USER = "postgres.arpakswzlfpntdwrrghy";
 
 // パスワードは以前のものと同じです
-private final String DB_PASS = "carp8912carp";
+private final String DB_PASS = "Carp8912Carp";
     
     public Profile findByUserId(String userId) {
         Profile profile = null;
