@@ -9,7 +9,7 @@ public class LikeDAO {
     // Supabaseの接続情報に変更
     private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
     private final String DB_USER = "postgres.arpakswzlfpntdwrrghy"; 
-    private final String DB_PASS = "carp8912carp";
+    private final String DB_PASS = "Carp8912Carp";
     public int toggleLike(int mutterId, String userName) {
         try {
             // PostgreSQLのドライバをロード
