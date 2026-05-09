@@ -12,7 +12,7 @@ public class MuttersDAO {
     // ★Supabase接続設定：ポート6543とSSLモード、プロジェクトID付きユーザー名を維持
     private final String JDBC_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
     private final String DB_USER = "postgres.arpakswzlfpntdwrrghy";
-    private final String DB_PASS = "carp8912carp";
+    private final String DB_PASS = "Carp8912Carp";
     
     public List<Mutter> findAll() {
         List<Mutter> mutterList = new ArrayList<>();
