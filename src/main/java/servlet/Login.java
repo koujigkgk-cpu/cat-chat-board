@@ -18,28 +18,27 @@ public class Login extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // リクエストパラメータの取得
+        // 1. パラメータの取得
         request.setCharacterEncoding("UTF-8");
         String name = request.getParameter("name");
         String pass = request.getParameter("pass");
 
-        // Userインスタンス（ユーザー情報）の生成
-        // IDと名前の両方に入力された名前を割り当てます
+        // 2. 入力情報をUserインスタンスにまとめる
         User user = new User(name, name, pass);
 
-        // ログイン処理
+        // 3. ログイン処理（DB検索）の実行
         LoginLogic loginLogic = new LoginLogic();
         boolean isLogin = loginLogic.execute(user);
 
-        // ログイン成功時の処理
+        // 4. 結果に応じた処理
         if (isLogin) {
-            // ユーザー情報をセッションスコープに保存
+            // 成功：セッションに保存
             HttpSession session = request.getSession();
             session.setAttribute("loginUser", user);
         }
 
-        // ログイン結果画面にフォワード
+        // 5. 結果画面へフォワード
         RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/loginResult.jsp");
         dispatcher.forward(request, response);
     }
-} // ← この閉じカッコが抜けていた可能性があります
+}
