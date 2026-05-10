@@ -21,8 +21,7 @@ public class UserDAO {
         }
 
         // カラム名に合わせてSQLを修正
-        String sql = "INSERT INTO ACCOUNTS(USER_ID, PASS, NAME) VALUES (?, ?, ?)";
-        
+        String sql = "INSERT INTO accounts(user_id, pass, name) VALUES (?, ?, ?)";        
         try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
              PreparedStatement pStmt = conn.prepareStatement(sql)) {
             
