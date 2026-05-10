@@ -2,25 +2,25 @@ package model;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String id;
-    private String name;
-    private String pass;
+    private String id;    // DBのUSER_IDに対応
+    private String name;  // DBのNAMEに対応
+    private String pass;  // DBのPASSに対応
 
     public User() {}
 
-    // ★ここをチェック！ 引数が2つのものと3つのもの、両方用意しておくと安全です
-    public User(String name, String pass) {
-        this.name = name;
+    // ログイン・登録時に使うコンストラクタ
+    public User(String id, String pass) {
+        this.id = id;
         this.pass = pass;
     }
 
+    // 全データ用
     public User(String id, String name, String pass) {
         this.id = id;
         this.name = name;
         this.pass = pass;
     }
 
-    // Getterメソッド
     public String getId() { return id; }
     public String getName() { return name; }
     public String getPass() { return pass; }

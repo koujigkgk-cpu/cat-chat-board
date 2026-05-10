@@ -59,7 +59,6 @@
         letter-spacing: 2px;
     }
 
-    /* --- ロゴ画像用の新しいスタイル --- */
     .logo-container {
         margin-bottom: 25px;
         display: flex;
@@ -67,16 +66,14 @@
     }
 
     .cat-logo {
-        width: 120px;         /* ロゴのサイズ */
+        width: 120px;
         height: 120px;
-        border-radius: 50%;   /* 正円にする */
+        border-radius: 50%;
         object-fit: cover;
-        /* 背景のネオンに合わせた青い光の輪 */
         box-shadow: 0 0 20px rgba(88, 166, 255, 0.6), 
                     0 0 40px rgba(88, 166, 255, 0.2);
         border: 2px solid rgba(255, 255, 255, 0.2);
     }
-    /* ------------------------------ */
 
     .input-label {
         display: block;
@@ -124,6 +121,29 @@
         transform: scale(1.02);
         box-shadow: 0 8px 20px rgba(29, 161, 242, 0.5);
     }
+
+    /* 新規登録セクション用のスタイル */
+    .register-footer {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .register-link {
+        display: inline-block;
+        text-decoration: none;
+        color: #7abaff;
+        font-size: 0.9rem;
+        padding: 8px 20px;
+        border: 1px solid rgba(122, 186, 255, 0.3);
+        border-radius: 20px;
+        transition: 0.3s;
+    }
+
+    .register-link:hover {
+        background: rgba(122, 186, 255, 0.1);
+        border-color: rgba(122, 186, 255, 0.8);
+    }
 </style>
 </head>
 <body>
@@ -132,8 +152,8 @@
     <h1>キャット板へようこそ</h1>
     
     <div class="logo-container">
-    <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" alt="Logo" class="cat-logo">
-</div>
+        <img src="${pageContext.request.contextPath}/Copilot_20260403_165901.png" alt="Logo" class="cat-logo">
+    </div>
     
     <form action="Login" method="post">
         <span class="input-label">ユーザー名：</span>
@@ -144,6 +164,15 @@
         
         <input type="submit" value="ログイン">
     </form>
+
+    <div class="register-footer">
+        <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem; margin-bottom: 12px;">
+            はじめての方はこちら
+        </p>
+        <a href="register.jsp" class="register-link">
+            🐾 新規アカウント作成
+        </a>
+    </div>
 </div>
 
 </body>
